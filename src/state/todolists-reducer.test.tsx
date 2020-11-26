@@ -1,12 +1,12 @@
 import {
-    AddToDoListAC,
-    ChangeFilterToDoListAC,
-    ChangeTitleToDoListAC,
-    RemoveToDoListAC,
+    addToDoListAC,
+    changeFilterToDoListAC,
+    changeTitleToDoListAC,
+    removeToDoListAC,
     todolistsReducer
 } from './todolists-reducer';
 import {v1} from 'uuid';
-import {FilterValuesType, TodoListType} from "../App";
+import {FilterValuesType, TodoListType} from "../AppWithredux";
 
 
 test('correct todolist should be removed', () => {
@@ -18,7 +18,7 @@ test('correct todolist should be removed', () => {
         {id: todolistId2, title: "What to buy", filter: "all"}
     ]
 
-    const endState = todolistsReducer(startState,  RemoveToDoListAC(todolistId1))
+    const endState = todolistsReducer(startState,  removeToDoListAC(todolistId1))
 
     expect(endState.length).toBe(1);
     expect(endState[0].id).toBe(todolistId2);
@@ -35,10 +35,10 @@ test('correct todolist should be added', () => {
         {id: todolistId2, title: "What to buy", filter: "all"}
     ]
 
-    const endState = todolistsReducer(startState, AddToDoListAC(newTodolistTitle))
+    const endState = todolistsReducer(startState, addToDoListAC(newTodolistTitle))
 
     expect(endState.length).toBe(3);
-    expect(endState[2].title).toBe(newTodolistTitle);
+    expect(endState[0].title).toBe(newTodolistTitle);
 });
 
 
@@ -53,7 +53,7 @@ test('correct todolist should change its name', () => {
         {id: todolistId2, title: "What to buy", filter: "all"}
     ]
 
-    const action = ChangeTitleToDoListAC( todolistId2, newTodolistTitle)
+    const action = changeTitleToDoListAC( todolistId2, newTodolistTitle)
     ;
 
     const endState = todolistsReducer(startState, action);
@@ -73,7 +73,7 @@ test('correct filter of todolist should be changed', () => {
         {id: todolistId2, title: "What to buy", filter: "all"}
     ]
 
-    const action = ChangeFilterToDoListAC(todolistId2, newFilter );
+    const action = changeFilterToDoListAC(todolistId2, newFilter );
 
     const endState = todolistsReducer(startState, action);
 
