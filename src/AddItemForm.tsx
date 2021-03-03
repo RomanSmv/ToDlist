@@ -4,7 +4,7 @@ import {AddBox} from "@material-ui/icons";
 
 
 type AddItemFormPropsType ={
-    addItem: (title: string) => void
+    addItem: (title: string, itemId?: string) => void
 }
 
 export const AddItemForm = React.memo ((props:AddItemFormPropsType ) => {

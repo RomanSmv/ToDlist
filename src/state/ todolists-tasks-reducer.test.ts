@@ -1,14 +1,23 @@
-import {TasksStateType, TodoListType} from "../AppWithredux";
-import {addToDoListAC, todolistsReducer} from "./todolists-reducer";
-import {tasksReducer} from "./tasks-reducer";
+import {} from "../AppWithredux";
+import {addToDoListAC, ToDoListBusinessType, todolistsReducer} from "./todolists-reducer";
+import {tasksReducer, TasksStateType} from "./tasks-reducer";
+import {TasksTypeAPI, TodolistTypeAPI} from "../api/todolist-api";
 
 
 
 test('ids should be equals', () => {
     const startTasksState: TasksStateType = {};
-    const startTodolistsState: Array<TodoListType> = [];
+    const startTodolistsState: Array<ToDoListBusinessType> = [];
 
-    const action = addToDoListAC("new todolist");
+    let todolist: TodolistTypeAPI = {
+        title: "new todolist",
+        id: 'any id',
+        addedDate: '',
+        order: 0
+    };
+
+
+    const action = addToDoListAC(todolist);
 
     const endTasksState = tasksReducer(startTasksState, action)
     const endTodolistsState = todolistsReducer(startTodolistsState, action)
@@ -17,6 +26,6 @@ test('ids should be equals', () => {
     const idFromTasks = keys[0];
     const idFromTodolists = endTodolistsState[0].id;
 
-    expect(idFromTasks).toBe(action.todolistId);
-    expect(idFromTodolists).toBe(action.todolistId);
+    expect(idFromTasks).toBe(action.todolist.id);
+    expect(idFromTodolists).toBe(action.todolist.id);
 });

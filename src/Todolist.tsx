@@ -1,19 +1,16 @@
-import React, {ChangeEvent, useCallback} from 'react';
-import {FilterValuesType, TasksType} from './AppWithredux';
+import React, {useCallback, useEffect} from 'react';
+import {FilterValuesType} from './AppWithredux';
 import {AddItemForm} from './AddItemForm'
 import {EditableSpan} from "./EditableSpan";
-import {Button, Checkbox, IconButton} from "@material-ui/core";
+import {Button, IconButton} from "@material-ui/core";
 import {Delete} from '@material-ui/icons';
 import {useDispatch, useSelector} from "react-redux";
-import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "./state/tasks-reducer";
+import {addTaskActionType, addTaskTC, fetchTasksTC} from "./state/tasks-reducer";
 import {AppRootState} from "./state/store";
 import {Task} from "./Task";
+import {TaskStatuses, TasksTypeAPI} from "./api/todolist-api";
+import {fetchTodolistsTC} from "./state/todolists-reducer";
 
-type TaskType = {
-    id: string
-    title: string
-    isDone: boolean
-}
 
 type PropsType = {
     id: string,
@@ -26,8 +23,14 @@ type PropsType = {
 
 export const Todolist = React.memo((props: PropsType) => {
     console.log('called App');
+    useEffect(() => {
 
-    const tasks = useSelector<AppRootState, Array<TasksType>>(state => state.tasks[props.id])
+        dispatch(fetchTasksTC(props.id))
+
+
+    }, [])
+
+    const tasks = useSelector<AppRootState, Array<TasksTypeAPI>>(state => state.tasks[props.id])
     const dispatch = useDispatch()
 
 
@@ -35,7 +38,10 @@ export const Todolist = React.memo((props: PropsType) => {
     const changeTodoListTitle = useCallback((newTitle: string) => props.changeTodoListTitle(props.id, newTitle), [props.changeTodoListTitle, props.id]);
 
 
-    const onAllClickHandler = useCallback(() => props.changeFilter(props.id, "all"), [props.changeFilter, props.id]);
+    const onAllClickHandler = useCallback(() => {
+        debugger
+        props.changeFilter(props.id, "all")
+    }, [props.changeFilter, props.id]);
     const onActiveClickHandler = useCallback(() => props.changeFilter(props.id, "active"), [props.changeFilter, props.id]);
     const onCompletedClickHandler = useCallback(() => props.changeFilter(props.id, "completed"), [props.changeFilter, props.id]);
 
@@ -43,12 +49,16 @@ export const Todolist = React.memo((props: PropsType) => {
     let tasksForTodolist = allTodolistTasks;
 
     if (props.filter === "active") {
-        tasksForTodolist = allTodolistTasks.filter(t => t.isDone === false);
+        tasksForTodolist = allTodolistTasks.filter(t => t.status === TaskStatuses.New);
     }
     if (props.filter === "completed") {
-        tasksForTodolist = allTodolistTasks.filter(t => t.isDone === true);
+        tasksForTodolist = allTodolistTasks.filter(t => t.status === TaskStatuses.Completed);
     }
 
+    const addTask = useCallback(function (title: string) {
+        const thunk = addTaskTC( title, props.id)
+        dispatch(thunk)
+    }, [dispatch])
 
     return <div>
         <h3><EditableSpan title={props.title} onChange={changeTodoListTitle}/>
@@ -57,17 +67,10 @@ export const Todolist = React.memo((props: PropsType) => {
                 <Delete/>
             </IconButton>
         </h3>
-        <AddItemForm addItem={useCallback((title) => {
-            dispatch(addTaskAC(title, props.id))
-        }, [props.id, dispatch])}/>
+        <AddItemForm addItem={addTask}/>
         <ul>
             {
-                tasksForTodolist.map(t =>
-                   <Task
-                   task={t}
-                   todolistId={props.id}
-                   />
-                )
+                tasksForTodolist.map(t => <Task key={t.id} task={t} todolistId={props.id}/>)
             }
         </ul>
         <div>

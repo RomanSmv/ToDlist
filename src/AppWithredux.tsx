@@ -1,14 +1,16 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import './App.css';
 import {Todolist} from './Todolist';
 import {AddItemForm} from "./AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
 import {
-    addToDoListAC,
+    addTodolistTC,
     changeFilterToDoListAC,
-    changeTitleToDoListAC,
-    removeToDoListAC,
+    changeTitleTodolistTC,
+    fetchTodolistsTC,
+    removeTodolistTC,
+    ToDoListBusinessType,
 } from "./state/todolists-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "./state/store";
@@ -16,39 +18,31 @@ import {AppRootState} from "./state/store";
 
 export type FilterValuesType = "all" | "active" | "completed";
 
-export type TodoListType = {
-
-    id: string,
-    title: string,
-    filter: FilterValuesType
-}
-export type TasksType = {
-
-    id: string,
-    title: string,
-    isDone: boolean
-}
-export type TasksStateType = {
-    [key: string]: Array<TasksType>
-}
 
 const AppWithredux = React.memo(() => {
-console.log('called App')
+    console.log('called App')
+
+    useEffect(() => {
+
+        dispatch(fetchTodolistsTC())
+
+
+    }, [])
 
     const dispatch = useDispatch()
 
-    const todoLists = useSelector<AppRootState, Array<TodoListType>>(state => state.todolists)
+    const todoLists = useSelector<AppRootState, Array<ToDoListBusinessType>>(state => state.todolists)
 
 
-    const onRemoveToDoList = useCallback((todoListID: string) => {
-
-        dispatch(removeToDoListAC(todoListID))
+    const onRemoveToDoList = useCallback((todoListId: string) => {
+        const thunk = removeTodolistTC(todoListId)
+        dispatch(thunk)
 
     }, [dispatch])
 
 
     const changeTodoListTitle = useCallback((id: string, newTitle: string) => {
-        dispatch(changeTitleToDoListAC(id, newTitle))
+        dispatch(changeTitleTodolistTC(id, newTitle))
 
     }, [dispatch])
 
@@ -57,13 +51,14 @@ console.log('called App')
         dispatch(changeFilterToDoListAC(id, value))
 
 
-    },[dispatch])
+    }, [dispatch])
 
     const addTodoList = useCallback((title: string) => {
-        const action = addToDoListAC(title)
+        const action = addTodolistTC(title)
         dispatch(action)
 
     }, [dispatch])
+
 
 
     return (
@@ -113,5 +108,6 @@ console.log('called App')
             </Container>
         </div>)
 })
+
 
 export default AppWithredux;
