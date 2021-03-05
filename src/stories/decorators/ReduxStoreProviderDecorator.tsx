@@ -7,11 +7,13 @@ import {tasksReducer} from "../../state/tasks-reducer";
 import {todolistsReducer} from "../../state/todolists-reducer";
 import {v1} from "uuid";
 import {TaskPriorities, TaskStatuses} from "../../api/todolist-api";
+import {appReducer} from "../../state/app-reducer";
 
 
 const rootReducer = combineReducers({
     tasks: tasksReducer,
-    todolists: todolistsReducer
+    todolists: todolistsReducer,
+
 })
 
 const initialGlobalState = {

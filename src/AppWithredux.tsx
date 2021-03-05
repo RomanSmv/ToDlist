@@ -14,6 +14,8 @@ import {
 } from "./state/todolists-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "./state/store";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import {ErrorSnackbar} from "./ErrorSneckbar/Errorsneckbar";
 
 
 export type FilterValuesType = "all" | "active" | "completed";
@@ -63,6 +65,7 @@ const AppWithredux = React.memo(() => {
 
     return (
         <div className="App">
+            <ErrorSnackbar />
             <AppBar position="static">
                 <Toolbar>
                     <IconButton edge="start" color="inherit" aria-label="menu">
@@ -73,6 +76,7 @@ const AppWithredux = React.memo(() => {
                     </Typography>
                     <Button color="inherit">Login</Button>
                 </Toolbar>
+                <LinearProgress />
             </AppBar>
             <Container fixed>
                 <Grid container>
