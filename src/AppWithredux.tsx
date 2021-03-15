@@ -16,16 +16,21 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "./state/store";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import {ErrorSnackbar} from "./ErrorSneckbar/Errorsneckbar";
+import {ValuesStatusType} from "./state/app-reducer";
 
 
 export type FilterValuesType = "all" | "active" | "completed";
+type PropsType = {
+    demo?: boolean
+}
 
-
-const AppWithredux = React.memo(() => {
+const AppWithredux = React.memo(({demo = false}: PropsType) => {
     console.log('called App')
 
     useEffect(() => {
-
+if (demo) {
+    return
+}
         dispatch(fetchTodolistsTC())
 
 
@@ -62,7 +67,7 @@ const AppWithredux = React.memo(() => {
     }, [dispatch])
 
 
-
+const status = useSelector<AppRootState, ValuesStatusType>((state => state.app.status))
     return (
         <div className="App">
             <ErrorSnackbar />
@@ -76,7 +81,7 @@ const AppWithredux = React.memo(() => {
                     </Typography>
                     <Button color="inherit">Login</Button>
                 </Toolbar>
-                <LinearProgress />
+                {status === 'loading' && <LinearProgress/>}
             </AppBar>
             <Container fixed>
                 <Grid container>
@@ -93,13 +98,12 @@ const AppWithredux = React.memo(() => {
                                 <Grid item>
                                     <Paper style={{padding: "10px"}}>
                                         <Todolist
+                                            todolist={tl}
                                             key={tl.id}
-                                            id={tl.id}
-                                            title={tl.title}
                                             changeFilter={changeFilter}
-                                            filter={tl.filter}
                                             onRemoveToDoList={onRemoveToDoList}
                                             changeTodoListTitle={changeTodoListTitle}
+                                            demo={demo}
                                         />
                                     </Paper>
                                 </Grid>

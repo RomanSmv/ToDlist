@@ -2,6 +2,8 @@ import {AddToDoListType, RemoveToDoListType, SetTodolistsActionType} from "./tod
 import {Dispatch} from "redux";
 import {TaskPriorities, tasksAPI, TaskStatuses, TasksTypeAPI} from "../api/todolist-api";
 import {AppRootState} from "./store";
+import {setAppStatusAC} from "./app-reducer";
+import {handleServerAppError, handleServerNetworkError} from "../Utils/Erroe-Utils";
 
 
 export type removeTaskActionType = {
@@ -65,7 +67,6 @@ export const tasksReducer = (state: TasksStateType = initialState, action: Actio
         case 'UPDATE-TASK': {
             let copystate = {...state}
             let tasks = state[action.todolistId]
-
             let newTasksArray = tasks.map(task => {
 
                 return task.id === action.taskId ? {...task, ...action.model} : task
@@ -135,31 +136,44 @@ export const setTasksAC = (tasks: Array<TasksTypeAPI>, todolistId: string): SetT
 }
 export const fetchTasksTC = (todolistId: string) => {
     return (dispatch: Dispatch) => {
+        //делаем крутилку перед запросом
+        dispatch(setAppStatusAC('loading'))
         tasksAPI.getTasks(todolistId)
             .then((res) => {
                 const tasks = res.data.items
-                const action = setTasksAC(tasks, todolistId)
-                dispatch(action)
+                dispatch(setTasksAC(tasks, todolistId))
+                //убираем крутилку
+                dispatch(setAppStatusAC('succeeded'))
             })
     }
 }
 export const deleteTasksTC = (todolistId: string, taskId: string,) => {
     return (dispatch: Dispatch) => {
+        dispatch(setAppStatusAC('loading'))
         tasksAPI.deleteTask(todolistId, taskId)
             .then((res) => {
-
                 const action = removeTaskAC(todolistId, taskId)
                 dispatch(action)
+                dispatch(setAppStatusAC('succeeded'))
             })
     }
 }
 export const addTaskTC = (title: string, todolistId: string) => {
     return (dispatch: Dispatch) => {
+        dispatch(setAppStatusAC('loading'))
         tasksAPI.createTask(todolistId, title)
             .then((res) => {
-                const task = res.data.data.item
-                const action = addTaskAC(task)
-                dispatch(action)
+                if (res.data.resultCode === 0) {
+                    const task = res.data.data.item
+                    const action = addTaskAC(task)
+                    dispatch(action)
+                    dispatch(setAppStatusAC('succeeded'))
+                } else {
+                    handleServerAppError(res.data, dispatch)
+                }
+            })
+            .catch((error) => {
+                handleServerNetworkError(error, dispatch)
             })
     }
 }
@@ -203,9 +217,9 @@ export type UpDateAPITaskType = {
 }
 export const updateTaskTC = (taskId: string, domainModel: UpDateAPITaskType, todolistId: string) => {
     return (dispatch: Dispatch, getState: () => AppRootState) => {
+        dispatch(setAppStatusAC('loading'))
         // так как мы обязаны на сервер отправить все св-ва, которые сервер ожидает, а не только
 // те, которые мы хотим обновить, соответственно нам нужно в этом месте взять таску целиком  // чтобы у неё отобрать остальные св-ва
-        debugger
         const state = getState()
         const task = state.tasks[todolistId].find(task => task.id === taskId)
         if (!task) {
@@ -225,9 +239,16 @@ export const updateTaskTC = (taskId: string, domainModel: UpDateAPITaskType, tod
         }
         tasksAPI.updateTask(todolistId, taskId, serverModel)
             .then((res) => {
-
-                const action = updateTaskSAC(taskId, domainModel, todolistId)
-                dispatch(action)
+                if (res.data.resultCode === 0) {
+                    const action = updateTaskSAC(taskId, domainModel, todolistId)
+                    dispatch(action)
+                }else {
+                    handleServerAppError(res.data, dispatch)
+                }
+                dispatch(setAppStatusAC('succeeded'))
+            })
+            .catch((error) => {
+                handleServerNetworkError(error, dispatch)
             })
     }
 }

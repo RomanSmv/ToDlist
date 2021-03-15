@@ -3,18 +3,19 @@ import {IconButton, TextField} from "@material-ui/core";
 import {AddBox} from "@material-ui/icons";
 
 
-type AddItemFormPropsType ={
+type AddItemFormPropsType = {
     addItem: (title: string, itemId?: string) => void
+    disabled?: boolean
 }
 
-export const AddItemForm = React.memo ((props:AddItemFormPropsType ) => {
+export const AddItemForm = React.memo(({addItem, disabled = false}: AddItemFormPropsType) => {
     console.log('called App')
     let [title, setTitle] = useState("")
     let [error, setError] = useState<string | null>(null)
 
     const addTask = () => {
         if (title.trim() !== "") {
-            props.addItem(title);
+            addItem(title);
             setTitle("");
         } else {
             setError("Title is required");
@@ -42,16 +43,17 @@ export const AddItemForm = React.memo ((props:AddItemFormPropsType ) => {
 
         <div>
             <TextField variant="outlined"
-             value={title}
-                   onChange={onChangeHandler}
-                   onKeyPress={onKeyPressHandler}
-                   error={!!error}
+                       disabled={disabled}
+                       value={title}
+                       onChange={onChangeHandler}
+                       onKeyPress={onKeyPressHandler}
+                       error={!!error}
                        label="Title"
                        helperText={error}
             />
 
-            <IconButton color="primary" onClick={addTask}>
-                <AddBox />
+            <IconButton color="primary" onClick={addTask} disabled={disabled}>
+                <AddBox/>
             </IconButton>
         </div>
     </div>

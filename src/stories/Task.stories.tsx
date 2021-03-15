@@ -1,9 +1,9 @@
 import React from 'react';
-import {AddItemForm} from './AddItemForm';
+import {AddItemForm} from '../AddItemForm';
 import {action} from "@storybook/addon-actions";
-import {Task} from "./Task";
-import {ReduxStoreProviderDecorator} from "./stories/decorators/ReduxStoreProviderDecorator";
-import {TaskPriorities, TaskStatuses} from "./api/todolist-api";
+import {Task} from "../Task";
+import {ReduxStoreProviderDecorator} from "./decorators/ReduxStoreProviderDecorator";
+import {TaskPriorities, TaskStatuses} from "../api/todolist-api";
 
 export default {
     title: 'Task Stories',
