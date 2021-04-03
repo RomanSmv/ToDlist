@@ -1,7 +1,8 @@
-import {FilterValuesType} from "../AppWithredux";
 import {todolistAPI, TodolistTypeAPI} from "../api/todolist-api";
 import {Dispatch} from "redux";
 import {RequestStatusType, setAppStatusAC, ValuesStatusType} from "./app-reducer";
+import {FilterValuesType} from "../TodolistsList";
+import {handleServerNetworkError} from "../Utils/Erroe-Utils";
 
 
 export type RemoveToDoListType = {
@@ -125,6 +126,9 @@ export const fetchTodolistsTC = () => {
                 dispatch(setToDoListsAC(res.data))
                 dispatch(setAppStatusAC('succeeded'))
             })
+            .catch((error) => {
+                handleServerNetworkError(error, dispatch)
+            })
     }
 }
 export const removeTodolistTC = (todolistId: string) => {
@@ -139,6 +143,9 @@ export const removeTodolistTC = (todolistId: string) => {
                 dispatch(removeToDoListAC(todolistId))
                 dispatch(setAppStatusAC('succeeded'))
             })
+            .catch((error) => {
+                handleServerNetworkError(error, dispatch)
+            })
     }
 }
 export const addTodolistTC = (title: string) => {
@@ -148,6 +155,9 @@ export const addTodolistTC = (title: string) => {
             .then((res) => {
                 dispatch(addToDoListAC(res.data.data.item))
                 dispatch(setAppStatusAC('succeeded'))
+            })
+            .catch((error) => {
+                handleServerNetworkError(error, dispatch)
             })
     }
 }
@@ -159,6 +169,9 @@ export const changeTitleTodolistTC = (id: string, title: string) => {
 
                 dispatch(changeTitleToDoListAC(id, title))
                 dispatch(setAppStatusAC('succeeded'))
+            })
+            .catch((error) => {
+                handleServerNetworkError(error, dispatch)
             })
     }
 }

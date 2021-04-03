@@ -3,6 +3,7 @@ import {todolistsReducer} from "./todolists-reducer";
 import {tasksReducer} from "./tasks-reducer";
 import thunk from "redux-thunk";
 import {appReducer} from "./app-reducer";
+import {authReducer} from "../features/Login/auth-reducer";
 
 
 //создание reducers
@@ -10,7 +11,8 @@ import {appReducer} from "./app-reducer";
 const rootReducer = combineReducers({
     todolists: todolistsReducer,
     tasks: tasksReducer,
-    app: appReducer
+    app: appReducer,
+    auth: authReducer
 })
 // создаем store
 export const store = createStore(rootReducer, applyMiddleware(thunk))

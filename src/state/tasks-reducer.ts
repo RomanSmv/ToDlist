@@ -156,6 +156,10 @@ export const deleteTasksTC = (todolistId: string, taskId: string,) => {
                 dispatch(action)
                 dispatch(setAppStatusAC('succeeded'))
             })
+            .catch((error) => {
+            handleServerNetworkError(error, dispatch)
+        })
+
     }
 }
 export const addTaskTC = (title: string, todolistId: string) => {

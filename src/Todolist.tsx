@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect} from 'react';
-import {FilterValuesType} from './AppWithredux';
 import {AddItemForm} from './AddItemForm'
 import {EditableSpan} from "./EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
@@ -10,6 +9,7 @@ import {AppRootState} from "./state/store";
 import {Task} from "./Task";
 import {TaskStatuses, TasksTypeAPI} from "./api/todolist-api";
 import {fetchTodolistsTC, ToDoListBusinessType} from "./state/todolists-reducer";
+import {FilterValuesType} from "./TodolistsList";
 
 
 type PropsType = {
@@ -63,35 +63,37 @@ export const Todolist = React.memo(({demo = false, ...props}: PropsType) => {
         dispatch(thunk)
     }, [dispatch])
 
-    return <div>
-        <h3><EditableSpan title={props.todolist.title} onChange={changeTodoListTitle}/>
-            <IconButton onClick={onRemoveToDoList} disabled={props.todolist.entityStatus === "loading"}>
-                <Delete/>
-            </IconButton>
-        </h3>
-        <AddItemForm addItem={addTask} disabled={props.todolist.entityStatus === "loading"}/>
-        <ul>
-            {
-                tasksForTodolist.map(t => <Task key={t.id} task={t} todolistId={props.todolist.id}/>)
-            }
-        </ul>
+    return (
         <div>
-            <Button
-                variant={props.todolist.filter === 'all' ? 'outlined' : 'text'}
-                onClick={onAllClickHandler}
-                color={"primary"}
-            >All
-            </Button>
-            <Button
-                variant={props.todolist.filter === 'active' ? 'outlined' : 'text'}
-                onClick={onActiveClickHandler}>Active
-            </Button>
-            <Button
-                variant={props.todolist.filter === 'completed' ? 'outlined' : 'text'}
-                onClick={onCompletedClickHandler}>Completed
-            </Button>
+            <h3>
+                <EditableSpan title={props.todolist.title} onChange={changeTodoListTitle}/>
+                <IconButton onClick={onRemoveToDoList} disabled={props.todolist.entityStatus === "loading"}>
+                    <Delete/>
+                </IconButton>
+            </h3>
+            <AddItemForm addItem={addTask} disabled={props.todolist.entityStatus === "loading"}/>
+            <ul>
+                {
+                    tasksForTodolist.map(t => <Task key={t.id} task={t} todolistId={props.todolist.id}/>)
+                }
+            </ul>
+            <div>
+                <Button
+                    variant={props.todolist.filter === 'all' ? 'outlined' : 'text'}
+                    onClick={onAllClickHandler}
+                    color={"primary"}
+                >All </Button>
+                <Button
+                    variant={props.todolist.filter === 'active' ? 'outlined' : 'text'}
+                    onClick={onActiveClickHandler}>Active
+                </Button>
+                <Button
+                    variant={props.todolist.filter === 'completed' ? 'outlined' : 'text'}
+                    onClick={onCompletedClickHandler}>Completed
+                </Button>
+            </div>
         </div>
-    </div>
+    )
 })
 
 
