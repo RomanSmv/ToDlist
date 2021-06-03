@@ -8,7 +8,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import {ErrorSnackbar} from "./ErrorSneckbar/Errorsneckbar";
 import {initializeAppTC, ValuesStatusType} from "./state/app-reducer";
 import {TodolistsList} from "./TodolistsList";
-import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
+import {HashRouter, Redirect, Route, Switch} from "react-router-dom";
 import {Login} from "./features/Login/login";
 import {logoutTC} from "./features/Login/auth-reducer";
 
@@ -76,9 +76,9 @@ const App = React.memo(({demo = false}: PropsType) => {
 )
 
 export const App1 = () => (
-    <BrowserRouter>
+    <HashRouter>
         <App/>
-    </BrowserRouter>
+    </HashRouter>
 )
 
 
